@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bug Bounty Notes</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="panel brand">
+        <h1>Bug Bounty Notes</h1>
+        <p>Track recon findings, vulnerable endpoints, and PoC notes from any device.</p>
+        <div class="sync-status">
+          <span id="syncState">Offline mode</span>
+          <button id="syncNow" type="button">Sync now</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>New Note</h2>
+        <form id="noteForm">
+          <label>
+            Program / Target
+            <input name="target" required maxlength="120" placeholder="example.com" />
+          </label>
+          <label>
+            Vulnerability Type
+            <input name="vulnType" required maxlength="120" placeholder="XSS, IDOR, SSRF" />
+          </label>
+          <label>
+            Severity
+            <select name="severity" required>
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </label>
+          <label>
+            Notes
+            <textarea name="content" required maxlength="5000" rows="5" placeholder="Payloads, repro steps, references..."></textarea>
+          </label>
+          <button type="submit">Save note</button>
+        </form>
+      </section>
+
+      <section class="panel notes">
+        <h2>Saved Notes</h2>
+        <p class="hint">Notes are saved locally and synced with the remote endpoint when configured.</p>
+        <ul id="notesList"></ul>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
