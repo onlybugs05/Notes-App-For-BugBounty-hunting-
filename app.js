@@ -16,7 +16,7 @@ form.addEventListener('submit', (event) => {
 
   const data = new FormData(form);
   const note = {
-    id: crypto.randomUUID(),
+    id: createNoteId(),
     target: data.get('target').toString().trim(),
     vulnType: data.get('vulnType').toString().trim(),
     severity: data.get('severity').toString(),
@@ -71,7 +71,7 @@ function render() {
         <strong>${escapeHtml(note.target)} · ${escapeHtml(note.vulnType)}</strong>
         <span class="severity">${escapeHtml(note.severity)}</span>
       </header>
-      <p>${escapeHtml(note.content).replaceAll('\n', '<br/>')}</p>
+      <p>${formatNoteContent(note.content)}</p>
       <p class="meta">${new Date(note.createdAt).toLocaleString()}</p>
       <button type="button" data-id="${escapeHtml(note.id)}">Delete</button>
     `;
@@ -132,4 +132,22 @@ function escapeHtml(text) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
+}
+
+function formatNoteContent(content) {
+  return escapeHtml(content).replaceAll('\n', '<br/>');
+}
+
+function createNoteId() {
+  if (window.crypto?.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+
+  if (window.crypto?.getRandomValues) {
+    const buffer = new Uint32Array(4);
+    window.crypto.getRandomValues(buffer);
+    return Array.from(buffer, (value) => value.toString(16).padStart(8, '0')).join('-');
+  }
+
+  return `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
 }

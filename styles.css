@@ -29,7 +29,9 @@ body {
 }
 
 .panel {
+  background: #1a2243;
   background: color-mix(in hsl, var(--panel), black 10%);
+  border-color: #2e447f;
   border: 1px solid color-mix(in hsl, var(--accent), transparent 80%);
   border-radius: 14px;
   padding: 1rem;
