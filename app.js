@@ -1,6 +1,7 @@
 const STORAGE_KEY = 'bugBountyNotes.v1';
 const SYNC_API_BASE = (window.BUG_BOUNTY_SYNC_URL || '').replace(/\/$/, '');
 const DEFAULT_SEVERITY = 'Medium';
+let noteCounter = 0;
 
 const form = document.getElementById('noteForm');
 const list = document.getElementById('notesList');
@@ -145,10 +146,15 @@ function createNoteId() {
   }
 
   if (window.crypto?.getRandomValues) {
-    const buffer = new Uint32Array(4);
+    const buffer = new Uint8Array(16);
     window.crypto.getRandomValues(buffer);
-    return Array.from(buffer, (value) => value.toString(16).padStart(8, '0')).join('-');
+    buffer[6] = (buffer[6] & 0x0f) | 0x40;
+    buffer[8] = (buffer[8] & 0x3f) | 0x80;
+    const hex = Array.from(buffer, (value) => value.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
   }
 
-  return `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+  noteCounter += 1;
+  const tick = Math.floor((window.performance?.now?.() || 0) * 1000).toString(36);
+  return `legacy-${Date.now().toString(36)}-${tick}-${noteCounter.toString(36)}`;
 }
