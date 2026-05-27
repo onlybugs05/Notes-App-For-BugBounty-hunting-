@@ -1,5 +1,6 @@
 const STORAGE_KEY = 'bugBountyNotes.v1';
 const SYNC_API_BASE = (window.BUG_BOUNTY_SYNC_URL || '').replace(/\/$/, '');
+const DEFAULT_SEVERITY = 'Medium';
 
 const form = document.getElementById('noteForm');
 const list = document.getElementById('notesList');
@@ -27,7 +28,7 @@ form.addEventListener('submit', (event) => {
   notes.unshift(note);
   persist();
   form.reset();
-  form.elements.severity.value = 'Medium';
+  form.elements.severity.value = DEFAULT_SEVERITY;
   syncNotes();
 });
 
