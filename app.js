@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'bugBountyNotes.v1';
-const SYNC_API_BASE = window.BUG_BOUNTY_SYNC_URL || '';
+const SYNC_API_BASE = (window.BUG_BOUNTY_SYNC_URL || '').replace(/\/$/, '');
 
 const form = document.getElementById('noteForm');
 const list = document.getElementById('notesList');
@@ -27,7 +27,7 @@ form.addEventListener('submit', (event) => {
   notes.unshift(note);
   persist();
   form.reset();
-  form.severity.value = 'Medium';
+  form.elements.severity.value = 'Medium';
   syncNotes();
 });
 
@@ -73,7 +73,7 @@ function render() {
       </header>
       <p>${escapeHtml(note.content).replaceAll('\n', '<br/>')}</p>
       <p class="meta">${new Date(note.createdAt).toLocaleString()}</p>
-      <button type="button" data-id="${note.id}">Delete</button>
+      <button type="button" data-id="${escapeHtml(note.id)}">Delete</button>
     `;
 
     item.querySelector('button').addEventListener('click', () => {
@@ -102,7 +102,7 @@ async function syncNotes(manual = false) {
 
   try {
     updateSyncState('Syncing...');
-    const response = await fetch(`${SYNC_API_BASE.replace(/\/$/, '')}/notes/sync`, {
+    const response = await fetch(`${SYNC_API_BASE}/notes/sync`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ notes }),
@@ -119,7 +119,8 @@ async function syncNotes(manual = false) {
     }
 
     updateSyncState(`Last synced at ${new Date().toLocaleTimeString()}`);
-  } catch {
+  } catch (error) {
+    console.error('Sync error:', error);
     updateSyncState('Sync failed - keeping local copy');
   }
 }
